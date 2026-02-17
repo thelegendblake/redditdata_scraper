@@ -5,8 +5,7 @@ from urllib.parse import urljoin
 from difflib import SequenceMatcher
 import requests
 import os
-import json
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # =============================================================================
 # CONFIGURATION
@@ -22,9 +21,6 @@ PREVIEW_MODE = False  # Set to True to just preview discovered threads without s
 DISCOVERY_LIMIT = 1000  # How many recent threads to check for discovery
 DISCOVERY_SORT = "hot"  # Options: "hot" (best for finding active discussions), "new", "top"
 MIN_COMMENTS_PER_THREAD = 10 # RELAXED: Skip threads with fewer comments than this (was 10)
-DISCOVERY_MAX_REQUESTS = 8  # Hard cap on discovery API calls for speed
-DISCOVERY_RECENT_LOOKBACK_DAYS = 14  # Avoid reusing recently seen threads for this many days
-DISCOVERY_HISTORY_MAX_ENTRIES = 5000
 
 # Manual thread URLs (used if USE_AUTO_DISCOVERY is False, or as a supplement)
 MANUAL_THREAD_URLS = [
@@ -64,7 +60,6 @@ REJECTED_LOG = os.path.join(OUTPUT_FOLDER, f"{STUDENT_NAMES}_rejected_comments.c
 REJECTED_THREADS_FILE = os.path.join(OUTPUT_FOLDER, "rejected_threads.txt")  # NEW: Persistent rejected threads
 OPTIMIZED_URLS_FILE = os.path.join(OUTPUT_FOLDER, "optimized_thread_urls.txt")
 DISCOVERED_URLS_FILE = os.path.join(OUTPUT_FOLDER, "discovered_thread_urls.txt")
-DISCOVERY_HISTORY_FILE = os.path.join(OUTPUT_FOLDER, "discovery_history.json")
 SUMMARY_FILE = os.path.join(OUTPUT_FOLDER, "run_summary.txt")
 
 MIN_SENTENCES = 2  # RELAXED from 3
@@ -79,17 +74,8 @@ ADAPTIVE_CLASSIFIER_MIN_SCORE = 5.2
 ADAPTIVE_RELAX_TRIGGER_PROGRESS = 0.55
 ADAPTIVE_RELAX_MIN_COLLECTED_RATIO = 0.35
 MIN_DISCOVERED_THREADS_AFTER_FILTER = 60  # Recover some rejected threads if filtering is too aggressive
-REQUEST_TIMEOUT_SECONDS = 25
-REQUEST_MIN_INTERVAL_SECONDS = 0.65  # Gentle pacing across all Reddit calls
-REQUEST_RETRY_MAX = 4
-THREAD_COMMENT_LIMIT = 300
-THREAD_COMMENT_SORT = "top"
-MAX_COMMENTS_PARSED_PER_THREAD = 1200
-MAX_PER_THREAD_BASE = 10
-MAX_PER_THREAD_RELAXED = 14
 
 UA = {"User-Agent": "SEVI39303-RedditData/1.0 (student project)"}
-LAST_REDDIT_REQUEST_TS = 0.0
 
 HARD_SKIP_THREAD_KEYWORDS = [
     "promote your business",
@@ -107,104 +93,7 @@ HARD_SKIP_THREAD_KEYWORDS = [
 # IMPROVED THREAD DISCOVERY SYSTEM
 # =============================================================================
 
-def build_discovery_sources(primary_sort):
-    """
-    Build a diversified discovery plan while honoring preferred sort first.
-    Returns list of tuples: (sort, top_window_or_none)
-    """
-    normalized = (primary_sort or "").strip().lower()
-    default_sources = [
-        ("hot", None),
-        ("new", None),
-        ("rising", None),
-        ("top", "week"),
-        ("top", "month"),
-    ]
-
-    preferred = []
-    if normalized == "top":
-        preferred = [("top", "week"), ("top", "month")]
-    elif normalized in {"hot", "new", "rising"}:
-        preferred = [(normalized, None)]
-    elif normalized.startswith("top_"):
-        top_window = normalized.split("_", 1)[1]
-        if top_window in {"hour", "day", "week", "month", "year", "all"}:
-            preferred = [("top", top_window)]
-
-    sources = preferred + [source for source in default_sources if source not in preferred]
-    return sources
-
-def load_discovery_history(history_file):
-    """Load persisted discovery history as {thread_url: iso_timestamp}."""
-    if not os.path.exists(history_file):
-        return {}
-
-    try:
-        with open(history_file, "r", encoding="utf-8") as f:
-            payload = json.load(f)
-    except Exception:
-        return {}
-
-    if isinstance(payload, dict):
-        threads = payload.get("threads", {})
-        if isinstance(threads, dict):
-            return {k: v for k, v in threads.items() if isinstance(k, str) and isinstance(v, str)}
-
-    # Backward compatibility: support older plain-list formats
-    if isinstance(payload, list):
-        now_iso = datetime.now().isoformat()
-        return {url: now_iso for url in payload if isinstance(url, str)}
-
-    return {}
-
-def get_recent_history_urls(history_map, lookback_days):
-    """Return URLs seen within lookback window from persisted history."""
-    cutoff = datetime.now() - timedelta(days=lookback_days)
-    recent_urls = set()
-    for url, ts in history_map.items():
-        try:
-            seen_at = datetime.fromisoformat(ts)
-        except Exception:
-            continue
-        if seen_at >= cutoff:
-            recent_urls.add(url)
-    return recent_urls
-
-def save_discovery_history(history_file, existing_history, discovered_urls, lookback_days, max_entries):
-    """Persist discovery history and prune stale/oversized records."""
-    now = datetime.now()
-    now_iso = now.isoformat()
-
-    merged = dict(existing_history)
-    for url in discovered_urls:
-        merged[url] = now_iso
-
-    stale_cutoff = now - timedelta(days=max(lookback_days * 6, 60))
-    pruned = {}
-    for url, ts in merged.items():
-        try:
-            seen_at = datetime.fromisoformat(ts)
-        except Exception:
-            continue
-        if seen_at >= stale_cutoff:
-            pruned[url] = ts
-
-    if len(pruned) > max_entries:
-        ranked = sorted(
-            pruned.items(),
-            key=lambda item: item[1],
-            reverse=True,
-        )[:max_entries]
-        pruned = dict(ranked)
-
-    payload = {
-        "updated_at": now_iso,
-        "threads": pruned,
-    }
-    with open(history_file, "w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=2)
-
-def discover_threads(subreddit, limit=1000, sort="new", min_comments=5, recent_urls=None):
+def discover_threads(subreddit, limit=1000, sort="new", min_comments=5):
     """
     Automatically discover threads from subreddit with IMPROVED keyword matching.
     Now uses a scoring system to find the BEST threads for pain/frustration content.
@@ -219,114 +108,53 @@ def discover_threads(subreddit, limit=1000, sort="new", min_comments=5, recent_u
     Returns:
         List of thread dicts sorted by relevance score
     """
-    recent_urls = recent_urls or set()
-    discovery_sources = build_discovery_sources(sort)
-    max_requests = min(max((limit + 99) // 100 + 2, 2), DISCOVERY_MAX_REQUESTS)
-    target_posts = max(limit, 120)
-
-    source_labels = [
-        f"{srt}:{window}" if window else srt
-        for srt, window in discovery_sources
-    ]
-    print(f"\n🔍 Discovering threads from r/{subreddit} (preferred={sort}, limit={limit})...")
+    print(f"\n🔍 Discovering threads from r/{subreddit} (sort={sort}, limit={limit})...")
     print(f"   Filtering for threads with {min_comments}+ comments...")
-    print(f"   Sources: {', '.join(source_labels)}")
-    print(f"   📡 Request budget: {max_requests} total API calls")
-
+    
+    # Reddit API limit is 100 per request, so we need pagination for > 100
     all_posts = []
-    seen_post_ids = set()
-    total_requests = 0
-
-    source_states = [
-        {
-            "sort": source_sort,
-            "top_window": top_window,
-            "after": None,
-            "exhausted": False,
-            "requests": 0,
-            "fetched_unique": 0,
-        }
-        for source_sort, top_window in discovery_sources
-    ]
-
-    session = requests.Session()
-    try:
-        while total_requests < max_requests and any(not s["exhausted"] for s in source_states):
-            for state in source_states:
-                if total_requests >= max_requests:
-                    break
-                if state["exhausted"]:
-                    continue
-
-                try:
-                    query_parts = ["limit=100"]
-                    if state["after"]:
-                        query_parts.append(f"after={state['after']}")
-                    if state["sort"] == "top":
-                        query_parts.append(f"t={state['top_window'] or 'week'}")
-
-                    query = "&".join(query_parts)
-                    url = f"https://www.reddit.com/r/{subreddit}/{state['sort']}.json?{query}"
-
-                    data = reddit_get_json(
-                        url,
-                        session=session,
-                        max_retries=3,
-                        timeout=REQUEST_TIMEOUT_SECONDS,
-                    )
-
-                    children = data.get("data", {}).get("children", [])
-                    state["after"] = data.get("data", {}).get("after")
-                    state["requests"] += 1
-                    total_requests += 1
-
-                    if not children:
-                        state["exhausted"] = True
-                        continue
-
-                    new_unique = 0
-                    for post in children:
-                        post_id = post.get("data", {}).get("id")
-                        if not post_id or post_id in seen_post_ids:
-                            continue
-                        seen_post_ids.add(post_id)
-                        all_posts.append(post)
-                        new_unique += 1
-
-                    state["fetched_unique"] += new_unique
-                    source_label = f"{state['sort']}:{state['top_window']}" if state["top_window"] else state["sort"]
-                    print(
-                        f"      {source_label} req {state['requests']}: "
-                        f"+{new_unique} unique posts (total: {len(all_posts)})"
-                    )
-
-                    # Exhaust source if pagination ended or it no longer yields unique posts.
-                    if not state["after"] or new_unique == 0:
-                        state["exhausted"] = True
-
-                    # Let other sources run before over-paging one source.
-                    if len(all_posts) >= target_posts and total_requests >= len(source_states):
-                        break
-
-                except Exception as e:
-                    source_label = f"{state['sort']}:{state['top_window']}" if state["top_window"] else state["sort"]
-                    print(f"      ✗ {source_label} failed: {e}")
-                    state["exhausted"] = True
-                    total_requests += 1
-
-            if len(all_posts) >= target_posts and total_requests >= len(source_states):
+    after = None
+    requests_needed = (limit + 99) // 100  # Round up to nearest 100
+    
+    print(f"   📡 Making {requests_needed} request(s) to Reddit API (max 100 per request)...")
+    
+    for request_num in range(requests_needed):
+        try:
+            # Build URL with pagination
+            url = f"https://www.reddit.com/r/{subreddit}/{sort}.json?limit=100"
+            if after:
+                url += f"&after={after}"
+            
+            r = requests.get(url, headers=UA, timeout=30)
+            r.raise_for_status()
+            data = r.json()
+            
+            # Extract posts
+            children = data.get("data", {}).get("children", [])
+            if not children:
+                print(f"      ⚠ No more posts available after {len(all_posts)} posts")
                 break
-    finally:
-        session.close()
-
-    print(f"\n   ✓ Retrieved {len(all_posts)} unique posts from Reddit")
-    for state in source_states:
-        source_label = f"{state['sort']}:{state['top_window']}" if state["top_window"] else state["sort"]
-        print(
-            f"      {source_label}: {state['fetched_unique']} unique posts "
-            f"across {state['requests']} request(s)"
-        )
-    print()
+            
+            all_posts.extend(children)
+            
+            # Get pagination token for next request
+            after = data.get("data", {}).get("after")
+            
+            print(f"      Request {request_num + 1}/{requests_needed}: Got {len(children)} posts (total: {len(all_posts)})")
+            
+            # Stop if we've reached our limit or there's no more data
+            if len(all_posts) >= limit or not after:
+                break
+            
+            # Be polite - wait between requests
+            if request_num < requests_needed - 1:
+                time.sleep(1)  # Reduced from 2s
+                
+        except Exception as e:
+            print(f"      ✗ Request {request_num + 1} failed: {e}")
+            break
+    
+    print(f"\n   ✓ Retrieved {len(all_posts)} total posts from Reddit\n")
     
     # IMPROVED: Multi-tier keyword system with scoring
     
@@ -383,17 +211,13 @@ def discover_threads(subreddit, limit=1000, sort="new", min_comments=5, recent_u
         "networking thread",
     ]
     
-    fresh_discovered = []
-    recent_discovered = []
+    discovered = []
     discovery_stats = {
         "total_checked": 0,
         "matched": 0,
-        "matched_fresh": 0,
-        "matched_recent_fallback": 0,
         "skipped_low_comments": 0,
         "skipped_keywords": 0,
         "skipped_meta_threads": 0,
-        "skipped_recent_seen": 0,
         "skipped_no_match": 0
     }
     
@@ -404,11 +228,6 @@ def discover_threads(subreddit, limit=1000, sort="new", min_comments=5, recent_u
         selftext = (post_data.get("selftext") or "").strip()
         searchable_text = f"{title} {selftext}".lower()
         num_comments = post_data.get("num_comments", 0)
-        permalink = post_data.get("permalink") or ""
-        if not permalink:
-            continue
-        thread_url = f"https://www.reddit.com{permalink}"
-        recently_seen = thread_url in recent_urls
         
         discovery_stats["total_checked"] += 1
         
@@ -471,68 +290,45 @@ def discover_threads(subreddit, limit=1000, sort="new", min_comments=5, recent_u
             score -= 8
             matched_keywords.append("PENALTY:meta_thread")
 
-        if recently_seen:
-            score -= 12
-            matched_keywords.append("PENALTY:recently_seen")
-
-        if score <= 0 and (num_comments < (min_comments * 2) or recently_seen):
-            if recently_seen:
-                discovery_stats["skipped_recent_seen"] += 1
-            else:
-                discovery_stats["skipped_no_match"] += 1
+        if score <= 0 and num_comments < (min_comments * 2):
+            discovery_stats["skipped_no_match"] += 1
             continue
         
         # RELAXED: Include ALL threads that passed filters, even with score 0
         # (The pain detection will filter comments later)
-        thread_item = {
+        thread_url = f"https://www.reddit.com{post_data['permalink']}"
+        discovered.append({
             "url": thread_url,
             "title": title,
             "score": post_data.get("score", 0),
             "num_comments": num_comments,
             "relevance_score": score,
-            "matched_keywords": matched_keywords if matched_keywords else ["NONE:general"],
-            "recently_seen": recently_seen,
-        }
-        if recently_seen:
-            recent_discovered.append(thread_item)
-            discovery_stats["matched_recent_fallback"] += 1
-        else:
-            fresh_discovered.append(thread_item)
-            discovery_stats["matched_fresh"] += 1
+            "matched_keywords": matched_keywords if matched_keywords else ["NONE:general"]
+        })
         discovery_stats["matched"] += 1
     
     print(f"\n  📊 Discovery Statistics:")
     print(f"     Total checked: {discovery_stats['total_checked']}")
     print(f"     ✓ Matched: {discovery_stats['matched']}")
-    print(f"       - Fresh matches: {discovery_stats['matched_fresh']}")
-    print(f"       - Recent fallback matches: {discovery_stats['matched_recent_fallback']}")
     print(f"     ✗ Skipped (< {min_comments} comments): {discovery_stats['skipped_low_comments']}")
     print(f"     ✗ Skipped (show-off posts): {discovery_stats['skipped_keywords']}")
     print(f"     ✗ Skipped (meta/promo threads): {discovery_stats['skipped_meta_threads']}")
-    print(f"     ✗ Skipped (recently seen threads): {discovery_stats['skipped_recent_seen']}")
     print(f"     ✗ Skipped (no keywords): {discovery_stats['skipped_no_match']}")
     
     # Prioritize pain relevance first, then engagement as a tie-breaker.
     print(f"\n  🎯 Sorting by pain relevance first, then engagement...")
 
-    for thread in (fresh_discovered + recent_discovered):
+    for thread in discovered:
         upvote_component = min(max(thread["score"], 0), 3000) / 250
         comment_component = min(thread["num_comments"], 400) / 20
-        freshness_bonus = 4 if not thread.get("recently_seen") else 0
         thread["combined_score"] = (
             (thread["relevance_score"] * 2.5) +   # Pain relevance dominates
             upvote_component +                    # Upvotes as weak signal
-            comment_component +                   # Comment volume as weak signal
-            freshness_bonus
+            comment_component                     # Comment volume as weak signal
         )
     
-    # Sort by combined score (highest first), preferring fresh threads.
-    fresh_discovered.sort(key=lambda x: x["combined_score"], reverse=True)
-    recent_discovered.sort(key=lambda x: x["combined_score"], reverse=True)
-
-    discovered = fresh_discovered + recent_discovered
-    max_return = max(limit * 2, MIN_DISCOVERED_THREADS_AFTER_FILTER + 20)
-    discovered = discovered[:max_return]
+    # Sort by combined score (highest first)
+    discovered.sort(key=lambda x: x["combined_score"], reverse=True)
     
     return discovered
 
@@ -931,10 +727,7 @@ def is_too_similar(new_text, existing_texts):
             return True
     return False
 
-def flatten_comments(node, out, max_comments=None):
-    if max_comments is not None and len(out) >= max_comments:
-        return
-
+def flatten_comments(node, out):
     if isinstance(node, dict):
         kind = node.get("kind")
         data = node.get("data", {})
@@ -942,89 +735,45 @@ def flatten_comments(node, out, max_comments=None):
             body = (data.get("body") or "").strip()
             if body:
                 out.append(data)
-                if max_comments is not None and len(out) >= max_comments:
-                    return
             replies = data.get("replies")
             if isinstance(replies, dict):
-                flatten_comments(replies, out, max_comments=max_comments)
+                flatten_comments(replies, out)
         elif kind == "Listing":
             for child in data.get("children", []):
-                flatten_comments(child, out, max_comments=max_comments)
-                if max_comments is not None and len(out) >= max_comments:
-                    return
+                flatten_comments(child, out)
 
-def reddit_get_json(url, session=None, max_retries=REQUEST_RETRY_MAX, timeout=REQUEST_TIMEOUT_SECONDS):
-    """
-    Throttled Reddit GET with unified retry/backoff handling.
-    Keeps request pace steady and respects 429 Retry-After when provided.
-    """
-    global LAST_REDDIT_REQUEST_TS
-    sess = session or requests
 
+def fetch_thread(thread_url, max_retries=3):
+    """Fetch thread with retry logic for rate limiting."""
+    json_url = thread_url.rstrip("/") + "/.json?limit=500"
+    
     for attempt in range(max_retries):
-        elapsed = time.time() - LAST_REDDIT_REQUEST_TS
-        if elapsed < REQUEST_MIN_INTERVAL_SECONDS:
-            time.sleep(REQUEST_MIN_INTERVAL_SECONDS - elapsed)
-
         try:
-            response = sess.get(url, headers=UA, timeout=timeout)
-            LAST_REDDIT_REQUEST_TS = time.time()
-
-            if response.status_code == 429:
-                if attempt >= max_retries - 1:
-                    response.raise_for_status()
-
-                retry_after_header = response.headers.get("Retry-After")
-                retry_after = None
-                if retry_after_header:
-                    try:
-                        retry_after = float(retry_after_header)
-                    except ValueError:
-                        retry_after = None
-
-                wait_time = retry_after if retry_after is not None else min(2.0 * (attempt + 1), 12.0)
-                wait_time += 0.2 * attempt
-                print(
-                    f"        ⏳ Rate limited (429). Waiting {wait_time:.1f}s "
-                    f"before retry {attempt + 2}/{max_retries}..."
-                )
-                time.sleep(wait_time)
-                continue
-
-            response.raise_for_status()
-            return response.json()
-
-        except requests.exceptions.RequestException as e:
-            if attempt >= max_retries - 1:
+            r = requests.get(json_url, headers=UA, timeout=30)
+            r.raise_for_status()
+            payload = r.json()
+            post = payload[0]["data"]["children"][0]["data"]
+            title = post.get("title", "")
+            comments = []
+            flatten_comments(payload[1], comments)
+            return title, comments
+            
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 429:  # Rate limited
+                if attempt < max_retries - 1:
+                    wait_time = (attempt + 1) * 3  # 3s, 6s, 9s
+                    print(f"        ⏳ Rate limited, waiting {wait_time}s before retry {attempt + 2}/{max_retries}...")
+                    time.sleep(wait_time)
+                else:
+                    raise  # Give up after max retries
+            else:
+                raise  # Other HTTP errors
+                
+        except Exception as e:
+            if attempt < max_retries - 1:
+                time.sleep(2)
+            else:
                 raise
-
-            wait_time = min(1.5 * (2 ** attempt), 10.0)
-            print(
-                f"        ⚠ Request failed ({type(e).__name__}). Waiting {wait_time:.1f}s "
-                f"before retry {attempt + 2}/{max_retries}..."
-            )
-            time.sleep(wait_time)
-
-    raise RuntimeError("Failed to fetch Reddit JSON after retries")
-
-def fetch_thread(thread_url, session=None):
-    """Fetch thread JSON and flatten comments with bounded parsing."""
-    json_url = (
-        thread_url.rstrip("/") +
-        f"/.json?limit={THREAD_COMMENT_LIMIT}&sort={THREAD_COMMENT_SORT}"
-    )
-
-    payload = reddit_get_json(
-        json_url,
-        session=session,
-        max_retries=REQUEST_RETRY_MAX,
-        timeout=REQUEST_TIMEOUT_SECONDS,
-    )
-    post = payload[0]["data"]["children"][0]["data"]
-    title = post.get("title", "")
-    comments = []
-    flatten_comments(payload[1], comments, max_comments=MAX_COMMENTS_PARSED_PER_THREAD)
-    return title, comments
 
 # =============================================================================
 # MAIN LOGIC
@@ -1053,13 +802,6 @@ if os.path.exists(REJECTED_THREADS_FILE):
 else:
     print("✓ No rejected threads file found - first run\n")
 
-discovery_history = load_discovery_history(DISCOVERY_HISTORY_FILE)
-recent_discovery_urls = get_recent_history_urls(discovery_history, DISCOVERY_RECENT_LOOKBACK_DAYS)
-print(
-    f"✓ Loaded discovery history: {len(discovery_history)} threads "
-    f"({len(recent_discovery_urls)} seen in last {DISCOVERY_RECENT_LOOKBACK_DAYS} days)\n"
-)
-
 # =============================================================================
 # THREAD DISCOVERY & ASSEMBLY
 # =============================================================================
@@ -1075,8 +817,7 @@ if USE_AUTO_DISCOVERY:
         SUBREDDIT, 
         limit=DISCOVERY_LIMIT, 
         sort=DISCOVERY_SORT,
-        min_comments=MIN_COMMENTS_PER_THREAD,
-        recent_urls=recent_discovery_urls,
+        min_comments=MIN_COMMENTS_PER_THREAD
     )
     discovered_all = list(discovered)
     
@@ -1104,11 +845,7 @@ if USE_AUTO_DISCOVERY:
         f.write(f"# Auto-discovered threads from r/{SUBREDDIT}\n")
         f.write(f"# Discovery date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"# Sort method: {DISCOVERY_SORT}\n")
-        f.write(f"# Multi-source strategy: hot,new,rising,top:week,top:month\n")
-        f.write(f"# Request budget: {DISCOVERY_MAX_REQUESTS}\n")
         f.write(f"# Min comments filter: {MIN_COMMENTS_PER_THREAD}\n")
-        f.write(f"# Recent-thread lookback: {DISCOVERY_RECENT_LOOKBACK_DAYS} days\n")
-        f.write(f"# Recent-thread history size: {len(recent_discovery_urls)}\n")
         f.write(f"# Total discovered: {len(discovered)}\n")
         f.write(f"# Sorted by: Pain relevance first, then engagement\n")
         f.write(f"# Formula: (relevance*2.5) + clipped_upvotes + clipped_comments\n\n")
@@ -1198,8 +935,6 @@ with open(ANALYSIS_FILE, "w", newline="", encoding="utf-8") as f:
 
 print(f"✓ Initialized output files with headers\n")
 
-thread_session = requests.Session()
-
 for thread_idx, url in enumerate(THREAD_URLS, 1):
     try:
         # Progress indicator
@@ -1226,14 +961,33 @@ for thread_idx, url in enumerate(THREAD_URLS, 1):
         
         print(f"\n{progress} Processing thread (Collected: {collected_so_far}/{TARGET_COMMENTS}, Need: {remaining} more)...")
         
-        # Single request path with built-in throttling and retry/backoff.
-        title, comments = fetch_thread(url, session=thread_session)
+        # RATE LIMITING: Add delay before fetching to avoid 429 errors
+        if thread_idx > 1:  # Skip delay for first thread
+            time.sleep(2)  # Increased to 2 seconds between threads
+        
+        # Retry logic for 429 errors
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                title, comments = fetch_thread(url)
+                break  # Success, exit retry loop
+            except requests.exceptions.HTTPError as e:
+                if '429' in str(e):
+                    if attempt < max_retries - 1:
+                        wait_time = (attempt + 1) * 10  # 10s, 20s, 30s
+                        print(f"  ⚠ Rate limited (429). Waiting {wait_time}s before retry {attempt + 2}/{max_retries}...")
+                        time.sleep(wait_time)
+                    else:
+                        print(f"  ✗ Skipping thread after {max_retries} attempts (rate limited)")
+                        raise
+                else:
+                    raise
         
         thread_count = 0
         thread_validation_failures = 0
         thread_rejected = 0
         
-        MAX_PER_THREAD = MAX_PER_THREAD_RELAXED if relaxed_threshold_mode else MAX_PER_THREAD_BASE
+        MAX_PER_THREAD = 10  # OPTIMIZATION: Stop after 10 good comments per thread
         ranked_candidates = []
         low_potential_filtered = 0
         hard_negative_filtered = 0
@@ -1391,8 +1145,6 @@ for thread_idx, url in enumerate(THREAD_URLS, 1):
             "url_failures": 0
         }
 
-thread_session.close()
-
 print("\n" + "=" * 70)
 print("COLLECTION COMPLETE")
 print("=" * 70)
@@ -1407,20 +1159,6 @@ if len(rows) > 0:
     print(f"\nPain/Frustration Category Breakdown:")
     for category, count in sorted(pain_category_counts.items(), key=lambda x: x[1], reverse=True):
         print(f"  {category}: {count}")
-
-if USE_AUTO_DISCOVERY and thread_productivity:
-    processed_urls = list(thread_productivity.keys())
-    save_discovery_history(
-        DISCOVERY_HISTORY_FILE,
-        discovery_history,
-        processed_urls,
-        DISCOVERY_RECENT_LOOKBACK_DAYS,
-        DISCOVERY_HISTORY_MAX_ENTRIES,
-    )
-    print(
-        f"✓ Updated discovery history with {len(processed_urls)} processed threads "
-        f"({DISCOVERY_HISTORY_FILE})"
-    )
 
 # =============================================================================
 # AUTOMATIC URL OPTIMIZATION
@@ -1530,10 +1268,6 @@ with open(SUMMARY_FILE, "w", encoding="utf-8") as f:
     f.write(f"Last run: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
     f.write(f"Subreddit: r/{SUBREDDIT}\n")
     f.write(f"Discovery mode: {'AUTO' if USE_AUTO_DISCOVERY else 'MANUAL'}\n")
-    if USE_AUTO_DISCOVERY:
-        f.write(f"Discovery request budget: {DISCOVERY_MAX_REQUESTS}\n")
-        f.write(f"Recent-thread lookback: {DISCOVERY_RECENT_LOOKBACK_DAYS} days\n")
-        f.write(f"Recent-thread history size: {len(recent_discovery_urls)}\n")
     f.write(f"Target: {TARGET_COMMENTS} SUBSTANTIVE pain comments\n")
     f.write(f"Collected: {len(rows)} comments\n")
     f.write(f"Rejected: {len(rejected_comments)} (non-pain/advice)\n")

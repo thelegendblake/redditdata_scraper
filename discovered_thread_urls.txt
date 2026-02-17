@@ -1,0 +1,372 @@
+# Auto-discovered threads from r/smallbusiness
+# Discovery date: 2026-02-16 23:03:49
+# Sort method: hot
+# Multi-source strategy: hot,new,rising,top:week,top:month
+# Request budget: 8
+# Min comments filter: 10
+# Recent-thread lookback: 14 days
+# Recent-thread history size: 207
+# Total discovered: 60
+# Sorted by: Pain relevance first, then engagement
+# Formula: (relevance*2.5) + clipped_upvotes + clipped_comments
+
+#1 (Combined Score: 100.0)
+https://www.reddit.com/r/smallbusiness/comments/1r5ibeh/growing_too_fast_and_drowning_in_cash_flow_issues/
+  Title: Growing too fast and drowning in cash flow issues
+  Relevance: 36 | Upvotes: 123 | Comments: 190
+  Keywords: MED:how to, MED:any advice, LOW:help, LOW:problem, LOW:issue
+
+#2 (Combined Score: 54.4)
+https://www.reddit.com/r/smallbusiness/comments/1r5agme/customer_did_not_pay_import_duties_or_accept/
+  Title: Customer did not pay import duties or accept parcel and wants me to reship the returned parcel for free
+  Relevance: 21 | Upvotes: 8 | Comments: 37
+  Keywords: HIGH:fail, MED:what should i, MED:does anyone know, LOW:bad, BIZ:irs
+
+#3 (Combined Score: 54.1)
+https://www.reddit.com/r/smallbusiness/comments/1r53jn7/help/
+  Title: Help!
+  Relevance: 20 | Upvotes: 19 | Comments: 81
+  Keywords: HIGH:losing money, LOW:help, LOW:question, LOW:advice, LOW:understand
+
+#4 (Combined Score: 18.4)
+https://www.reddit.com/r/smallbusiness/comments/1qle6zz/married_couple_running_a_business_together_and_i/
+  Title: Married couple running a business together and I feel like I’m disappearing. How do you survive this?
+  Relevance: 3 | Upvotes: 172 | Comments: 205
+  Keywords: LOW:understand, BIZ:irs, SIG:question_title, SIG:first_person_context, SIG:detailed_context
+
+#5 (Combined Score: 11.7)
+https://www.reddit.com/r/smallbusiness/comments/1qsc1ax/i_didnt_expect_the_loneliest_part_of_running_a/
+  Title: I didn’t expect the loneliest part of running a small business to be making decisions alone
+  Relevance: 3 | Upvotes: 251 | Comments: 63
+  Keywords: LOW:help, LOW:question, LOW:wrong, LOW:stress, SIG:first_person_context
+
+#6 (Combined Score: 140.2)
+https://www.reddit.com/r/smallbusiness/comments/1r6ht6t/family_business_failing_need_advice/
+  Title: Family Business Failing, Need Advice
+  Relevance: 55 | Upvotes: 18 | Comments: 52
+  Keywords: HIGH:fail, HIGH:failing, HIGH:struggling, MED:how to, MED:need advice
+
+#7 (Combined Score: 115.8)
+https://www.reddit.com/r/smallbusiness/comments/1r6ciqz/i_failed_7_businesses_before_i_figured_out_the/
+  Title: I failed 7 businesses before I figured out the one thing that actually matters
+  Relevance: 46 | Upvotes: 0 | Comments: 16
+  Keywords: HIGH:cannot, HIGH:fail, HIGH:failed, HIGH:struggling, MED:how to
+
+#8 (Combined Score: 102.2)
+https://www.reddit.com/r/smallbusiness/comments/1qss27x/predatory_ada_serial_filer_targeting_my_business/
+  Title: Predatory ADA "Serial Filer" targeting my business for the second time
+  Relevance: 39 | Upvotes: 142 | Comments: 83
+  Keywords: HIGH:fail, HIGH:failing, MED:any advice, LOW:issue, LOW:question
+
+#9 (Combined Score: 88.2)
+https://www.reddit.com/r/smallbusiness/comments/1r14m4o/growth_or_cut_labor/
+  Title: Growth, or cut labor?
+  Relevance: 35 | Upvotes: 5 | Comments: 14
+  Keywords: HIGH:can't, HIGH:help me, MED:how to, MED:any advice, LOW:help
+
+#10 (Combined Score: 87.2)
+https://www.reddit.com/r/smallbusiness/comments/1qvyahc/what_ive_learned_about_small_business_owners_as_a/
+  Title: What I've learned about small business owners as a consultant
+  Relevance: 34 | Upvotes: 59 | Comments: 39
+  Keywords: HIGH:can't, HIGH:fail, HIGH:frustrated, LOW:help, LOW:advice
+
+#11 (Combined Score: 80.6)
+https://www.reddit.com/r/smallbusiness/comments/1r64495/is_outsourcing_actually_bad_or_do_most_founders/
+  Title: Is outsourcing actually bad — or do most founders just do it wrong?
+  Relevance: 32 | Upvotes: 2 | Comments: 11
+  Keywords: HIGH:fail, HIGH:ruined, HIGH:went wrong, LOW:problem, LOW:wrong
+
+#12 (Combined Score: 70.2)
+https://www.reddit.com/r/smallbusiness/comments/1qru0ls/customer_used_my_product_for_6_months_then/
+  Title: Customer used my product for 6 months then demanded a full refund because he "changed his mind"
+  Relevance: 23 | Upvotes: 370 | Comments: 224
+  Keywords: HIGH:fail, HIGH:failing, LOW:wrong, LOW:bad, LOW:don't know
+
+#13 (Combined Score: 69.8)
+https://www.reddit.com/r/smallbusiness/comments/1qq39wb/i_am_a_small_furniture_company_and_i_am/
+  Title: I am a small furniture company, and I am completely f*cked. I desperately need some business advice.
+  Relevance: 25 | Upvotes: 232 | Comments: 127
+  Keywords: HIGH:cannot, HIGH:desperate, MED:any advice, LOW:advice, LOW:don't know
+
+#14 (Combined Score: 68.3)
+https://www.reddit.com/r/smallbusiness/comments/1r0tmkl/business_advertising_advice/
+  Title: Business advertising advice
+  Relevance: 27 | Upvotes: 9 | Comments: 16
+  Keywords: HIGH:struggling, HIGH:desperate, MED:how to, MED:any advice, LOW:advice
+
+#15 (Combined Score: 67.4)
+https://www.reddit.com/r/smallbusiness/comments/1qq7g4r/closing_down_business_am_i_making_the_correct/
+  Title: Closing Down Business - Am I Making The Correct Decision?
+  Relevance: 26 | Upvotes: 43 | Comments: 44
+  Keywords: HIGH:fail, HIGH:failed, LOW:issue, LOW:advice, BIZ:irs
+
+#16 (Combined Score: 63.7)
+https://www.reddit.com/r/smallbusiness/comments/1qpxmy2/new_to_importingsourcing_for_my_small_biz_any/
+  Title: New to importing/sourcing for my small biz any reliable platforms for Made-in-China products?
+  Relevance: 25 | Upvotes: 33 | Comments: 21
+  Keywords: HIGH:went wrong, LOW:help, LOW:issue, LOW:tips, LOW:wrong
+
+#17 (Combined Score: 61.0)
+https://www.reddit.com/r/smallbusiness/comments/1r6b2jl/business_plan_review_professional_reviewer/
+  Title: Business Plan review - professional reviewer?
+  Relevance: 24 | Upvotes: 3 | Comments: 19
+  Keywords: HIGH:help me, MED:any advice, LOW:help, LOW:question, LOW:advice
+
+#18 (Combined Score: 60.4)
+https://www.reddit.com/r/smallbusiness/comments/1qvu4c2/working_on_delegating_for_months/
+  Title: Working on delegating for months
+  Relevance: 23 | Upvotes: 145 | Comments: 46
+  Keywords: MED:how to, MED:any tips, LOW:problem, LOW:issue, LOW:question
+
+#19 (Combined Score: 58.6)
+https://www.reddit.com/r/smallbusiness/comments/1qx8yl4/cybersecurity_basics_that_actually_matter_for/
+  Title: Cybersecurity basics that actually matter for small business (no BS)
+  Relevance: 23 | Upvotes: 30 | Comments: 19
+  Keywords: HIGH:annoying, HIGH:hate, LOW:help, LOW:question, LOW:advice
+
+#20 (Combined Score: 55.6)
+https://www.reddit.com/r/smallbusiness/comments/1r2199x/question_gusto_for_single_seasonal_employee/
+  Title: Question: Gusto for single seasonal employee?
+  Relevance: 22 | Upvotes: 3 | Comments: 11
+  Keywords: MED:how to, MED:any advice, LOW:help, LOW:problem, LOW:question
+
+#21 (Combined Score: 53.7)
+https://www.reddit.com/r/smallbusiness/comments/1r6nq9c/small_businesses_how_are_you_taking_ach_payments/
+  Title: Small businesses, how are you taking ACH payments?
+  Relevance: 21 | Upvotes: 1 | Comments: 23
+  Keywords: HIGH:frustrating, HIGH:hate, MED:any advice, LOW:advice, SIG:question_title
+
+#22 (Combined Score: 53.5)
+https://www.reddit.com/r/smallbusiness/comments/1qvverv/entering_peptide_trading_how_do_you_not_get/
+  Title: Entering peptide trading. How do you not get destroyed by quality disputes?
+  Relevance: 21 | Upvotes: 25 | Comments: 17
+  Keywords: HIGH:disaster, MED:suggestions, LOW:bad, LOW:understand, BIZ:irs
+
+#23 (Combined Score: 51.7)
+https://www.reddit.com/r/smallbusiness/comments/1r6ataq/business_loans_how_the_heck_do_you_get_them_and/
+  Title: Business loans, how the heck do you get them and which one is the right one. Talk to me like I am 6 years old.
+  Relevance: 20 | Upvotes: 16 | Comments: 32
+  Keywords: HIGH:desperate, MED:how do i, MED:how to, LOW:advice, LOW:no idea
+
+#24 (Combined Score: 51.4)
+https://www.reddit.com/r/smallbusiness/comments/1r6de4t/google_overview_is_crediting_the_wrong_brand_for/
+  Title: Google Overview is crediting the wrong brand for my product. What actually moves the needle?
+  Relevance: 20 | Upvotes: 49 | Comments: 25
+  Keywords: HIGH:losing customers, LOW:wrong, BIZ:competitor, BIZ:irs, SIG:question_title
+
+#25 (Combined Score: 51.0)
+https://www.reddit.com/r/smallbusiness/comments/1r2e5hb/looking_to_hire_someone_to_help_me_find_new/
+  Title: Looking to hire someone to help me find new customers for my online service business. Any tips?
+  Relevance: 20 | Upvotes: 8 | Comments: 20
+  Keywords: HIGH:help me, MED:any tips, LOW:help, LOW:problem, LOW:question
+
+#26 (Combined Score: 50.6)
+https://www.reddit.com/r/smallbusiness/comments/1r64r7u/failing_family_business/
+  Title: Failing family business
+  Relevance: 20 | Upvotes: 3 | Comments: 12
+  Keywords: HIGH:fail, HIGH:failing, LOW:help, LOW:problem, LOW:confused
+
+#27 (Combined Score: 46.6)
+https://www.reddit.com/r/smallbusiness/comments/1r4tm90/confused_x_11_by_dismissed_employee/
+  Title: Confused x 11 by dismissed employee
+  Relevance: 17 | Upvotes: 154 | Comments: 69
+  Keywords: HIGH:help me, LOW:help, LOW:confused, LOW:understand, BIZ:competitor
+
+#28 (Combined Score: 46.5)
+https://www.reddit.com/r/smallbusiness/comments/1qtizlr/fired_a_super_likeable_employee_who_just_couldnt/
+  Title: Fired a super likeable employee who just couldn’t get their time management under control
+  Relevance: 17 | Upvotes: 94 | Comments: 73
+  Keywords: MED:how to, MED:any tips, LOW:issue, LOW:tips, LOW:worried
+
+#29 (Combined Score: 44.8)
+https://www.reddit.com/r/smallbusiness/comments/1qoysg3/customer_swearing_name_calling_insultingwhen_to/
+  Title: Customer swearing, name calling, insulting...when to hang-up.
+  Relevance: 16 | Upvotes: 69 | Comments: 91
+  Keywords: MED:how to, MED:why is, LOW:help, LOW:issue, LOW:wrong
+
+#30 (Combined Score: 43.5)
+https://www.reddit.com/r/smallbusiness/comments/1r62o18/why_does_everyone_act_like_google_sheets_cant/
+  Title: Why does everyone act like Google Sheets can't handle scheduling?
+  Relevance: 17 | Upvotes: 0 | Comments: 19
+  Keywords: HIGH:can't, MED:why does, LOW:problem, LOW:issue, LOW:question
+
+#31 (Combined Score: 43.2)
+https://www.reddit.com/r/smallbusiness/comments/1qj2pz0/paid_this_business_auction_6000_5_weeks_ago/
+  Title: Paid this business (auction) $6000 5 weeks ago, undelivered goods, held money, what do I do?
+  Relevance: 16 | Upvotes: 67 | Comments: 59
+  Keywords: HIGH:frustrating, MED:what do i, MED:suggestions, LOW:problem, SIG:question_title
+
+#32 (Combined Score: 41.8)
+https://www.reddit.com/r/smallbusiness/comments/1r2l5y2/how_do_you_get_new_clients/
+  Title: How Do You Get New Clients?
+  Relevance: 16 | Upvotes: 17 | Comments: 35
+  Keywords: HIGH:struggling, MED:how to, MED:suggestions, LOW:challenge, SIG:question_title
+
+#33 (Combined Score: 41.8)
+https://www.reddit.com/r/smallbusiness/comments/1r3tc6o/why_does_everyone_keep_giving_corporate_advice_to/
+  Title: Why does everyone keep giving corporate advice to startups?
+  Relevance: 16 | Upvotes: 41 | Comments: 32
+  Keywords: MED:how to, MED:why does, LOW:problem, LOW:advice, BIZ:irs
+
+#34 (Combined Score: 41.3)
+https://www.reddit.com/r/smallbusiness/comments/1r6ii9k/how_do_you_grow_a_secondhand_business_when/
+  Title: How do you grow a secondhand business when everything you find only exists once?
+  Relevance: 16 | Upvotes: 109 | Comments: 17
+  Keywords: HIGH:can't, LOW:problem, LOW:stress, BIZ:irs, SIG:question_title
+
+#35 (Combined Score: 41.2)
+https://www.reddit.com/r/smallbusiness/comments/1qjzz3i/boss_offering_to_sell_me_the_coffee_shop_i_work/
+  Title: Boss offering to sell me the coffee shop I work at for $65k — does this sound reasonable on the surface?
+  Relevance: 9 | Upvotes: 448 | Comments: 339
+  Keywords: LOW:help, LOW:question, LOW:bad, BIZ:irs, SIG:question_title
+
+#36 (Combined Score: 40.0)
+https://www.reddit.com/r/smallbusiness/comments/1qu7qew/employee_issues/
+  Title: Employee Issues
+  Relevance: 14 | Upvotes: 80 | Comments: 94
+  Keywords: MED:how do i, MED:what should i, LOW:help, LOW:issue, BIZ:irs
+
+#37 (Combined Score: 38.5)
+https://www.reddit.com/r/smallbusiness/comments/1r5ilb6/advice_for_hiring_good_employees/
+  Title: Advice for hiring good employees?
+  Relevance: 15 | Upvotes: 13 | Comments: 18
+  Keywords: LOW:help, LOW:question, LOW:advice, LOW:wrong, LOW:understand
+
+#38 (Combined Score: 36.6)
+https://www.reddit.com/r/smallbusiness/comments/1r4zzj5/partner_not_taking_accounting_seriously/
+  Title: Partner not taking Accounting Seriously
+  Relevance: 14 | Upvotes: 13 | Comments: 31
+  Keywords: HIGH:can't, LOW:question, LOW:understand, BIZ:irs, SIG:first_person_context
+
+#39 (Combined Score: 36.2)
+https://www.reddit.com/r/smallbusiness/comments/1r6fkg0/should_i_stop_this_now/
+  Title: Should I stop this now??
+  Relevance: 14 | Upvotes: 2 | Comments: 23
+  Keywords: HIGH:please help, MED:suggestions, LOW:help, LOW:confused, SIG:question_title
+
+#40 (Combined Score: 35.9)
+https://www.reddit.com/r/smallbusiness/comments/1r58vh9/need_help_abt_something/
+  Title: Need help abt something
+  Relevance: 14 | Upvotes: 3 | Comments: 18
+  Keywords: HIGH:help me, HIGH:need help, LOW:help, SIG:first_person_context, SIG:detailed_context
+
+#41 (Combined Score: 35.9)
+https://www.reddit.com/r/smallbusiness/comments/1r282vi/need_help_being_directed_to_a_solid_voip_set_up/
+  Title: Need help being directed to a solid VOIP set up
+  Relevance: 14 | Upvotes: 2 | Comments: 17
+  Keywords: HIGH:need help, HIGH:hate, LOW:help, SIG:first_person_context, SIG:detailed_context
+
+#42 (Combined Score: 35.8)
+https://www.reddit.com/r/smallbusiness/comments/1r3ei1e/getting_into_2000_stores_in_retail_what_should_i/
+  Title: Getting into 2000 stores in retail, what should I expect? Any advice on getting sell through?
+  Relevance: 14 | Upvotes: 5 | Comments: 16
+  Keywords: MED:what do i, MED:any advice, MED:what should i, LOW:advice, LOW:no idea
+
+#43 (Combined Score: 35.7)
+https://www.reddit.com/r/smallbusiness/comments/1r2lgb9/how_did_you_decide_what_business_to_start/
+  Title: How did you decide what business to start?
+  Relevance: 14 | Upvotes: 3 | Comments: 14
+  Keywords: HIGH:struggling, MED:any advice, LOW:problem, LOW:advice, SIG:question_title
+
+#44 (Combined Score: 35.7)
+https://www.reddit.com/r/smallbusiness/comments/1r4m2lx/deducting_tips_paid_to_employees_on_1065/
+  Title: Deducting tips paid to employees on 1065
+  Relevance: 14 | Upvotes: 3 | Comments: 13
+  Keywords: HIGH:can't, LOW:trouble, LOW:tips, BIZ:irs, SIG:first_person_context
+
+#45 (Combined Score: 35.3)
+https://www.reddit.com/r/smallbusiness/comments/1r0v3cf/im_busier_than_ever_but_my_business_isnt_growing/
+  Title: I'm busier than ever but my business isn't growing
+  Relevance: 12 | Upvotes: 50 | Comments: 102
+  Keywords: HIGH:can't, MED:how to, LOW:problem, LOW:don't know, SIG:first_person_context
+
+#46 (Combined Score: 34.0)
+https://www.reddit.com/r/smallbusiness/comments/1qxjili/demand_is_growing_in_my_online_business_but_im/
+  Title: Demand is growing in my online business but I’m struggling to keep products in stock
+  Relevance: 13 | Upvotes: 67 | Comments: 25
+  Keywords: HIGH:struggling, LOW:problem, LOW:issue, LOW:understand, LOW:challenge
+
+#47 (Combined Score: 33.6)
+https://www.reddit.com/r/smallbusiness/comments/1r6orwz/how_do_you_grow_a_remote_bookkeeping_business/
+  Title: How do you grow a remote bookkeeping business when you're starting from zero?
+  Relevance: 13 | Upvotes: 15 | Comments: 20
+  Keywords: HIGH:frustrating, LOW:wrong, BIZ:irs, SIG:question_title, SIG:first_person_context
+
+#48 (Combined Score: 32.2)
+https://www.reddit.com/r/smallbusiness/comments/1r3txe0/cold_outreach_to_local_shops_30_emails_0_replies/
+  Title: Cold outreach to local shops: 30 emails, 0 replies. What am I missing?
+  Relevance: 12 | Upvotes: 3 | Comments: 44
+  Keywords: LOW:issue, LOW:wrong, LOW:bad, LOW:understand, BIZ:irs
+
+#49 (Combined Score: 32.0)
+https://www.reddit.com/r/smallbusiness/comments/1qnky4n/looking_for_advice_on_growing_my_garden_business/
+  Title: Looking for advice on growing my garden business and side hustles for extra cash
+  Relevance: 12 | Upvotes: 123 | Comments: 30
+  Keywords: MED:how to, MED:any advice, MED:any tips, LOW:advice, LOW:tips
+
+#50 (Combined Score: 31.9)
+https://www.reddit.com/r/smallbusiness/comments/1qjhbw2/got_laid_off_from_a_job_i_loved_and_was_good_at/
+  Title: Got laid off from a job I loved and was good at. Couldn’t find my way back in. So I’m trying something scary instead.
+  Relevance: 12 | Upvotes: 57 | Comments: 34
+  Keywords: MED:why does, LOW:help, LOW:advice, LOW:bad, BIZ:irs
+
+#51 (Combined Score: 31.1)
+https://www.reddit.com/r/smallbusiness/comments/1qxg3lx/how_did_you_guys_start_your_first_business/
+  Title: How did you guys start your first business?
+  Relevance: 11 | Upvotes: 171 | Comments: 59
+  Keywords: MED:any advice, LOW:help, LOW:advice, BIZ:irs, SIG:question_title
+
+#52 (Combined Score: 30.9)
+https://www.reddit.com/r/smallbusiness/comments/1r1ilxm/website_design/
+  Title: Website design
+  Relevance: 12 | Upvotes: 10 | Comments: 17
+  Keywords: HIGH:struggling, MED:any advice, LOW:advice, LOW:challenge, SIG:first_person_context
+
+#53 (Combined Score: 30.6)
+https://www.reddit.com/r/smallbusiness/comments/1r0upoe/at_what_stage_does_inhouse_marketing_make_more/
+  Title: At what stage does in-house marketing make more sense than agencies? Sharing my experience
+  Relevance: 12 | Upvotes: 5 | Comments: 12
+  Keywords: LOW:help, LOW:question, LOW:bad, LOW:understand, BIZ:irs
+
+#54 (Combined Score: 27.6)
+https://www.reddit.com/r/smallbusiness/comments/1qh8hv9/custom_apparel_customer_placed_huge_order_then/
+  Title: Custom apparel customer placed huge order, then disputed the charge after receiving everything. What are my options?
+  Relevance: 9 | Upvotes: 427 | Comments: 68
+  Keywords: HIGH:help me, LOW:help, LOW:problem, SIG:question_title, SIG:first_person_context
+
+#55 (Combined Score: 26.9)
+https://www.reddit.com/r/smallbusiness/comments/1r4y8cm/how_did_you_decide_you_could_take_the_plunge_and/
+  Title: How did you decide you could take the plunge and start your business?
+  Relevance: 10 | Upvotes: 9 | Comments: 38
+  Keywords: MED:how to, LOW:problem, LOW:don't know, LOW:no idea, LOW:understand
+
+#56 (Combined Score: 26.4)
+https://www.reddit.com/r/smallbusiness/comments/1qwl84a/food_truck_cash_management_when_half_your/
+  Title: Food truck cash management when half your customers still pay cash and banks make it impossible
+  Relevance: 4 | Upvotes: 592 | Comments: 281
+  Keywords: HIGH:can't, LOW:problem, SIG:first_person_context, SIG:detailed_context, PENALTY:recently_seen
+
+#57 (Combined Score: 26.2)
+https://www.reddit.com/r/smallbusiness/comments/1r1myoy/i_started_my_own_business_any_tips_for_outreach/
+  Title: I started my own business, any tips for outreach👩‍💻
+  Relevance: 10 | Upvotes: 5 | Comments: 24
+  Keywords: MED:any advice, MED:any tips, LOW:trouble, LOW:advice, LOW:tips
+
+#58 (Combined Score: 26.1)
+https://www.reddit.com/r/smallbusiness/comments/1r1tokd/trying_to_build_an_auto_transport_company_the/
+  Title: Trying to build an auto transport company the honest way is harder than I expected
+  Relevance: 10 | Upvotes: 3 | Comments: 21
+  Keywords: HIGH:hate, LOW:help, LOW:question, LOW:bad, SIG:first_person_context
+
+#59 (Combined Score: 25.6)
+https://www.reddit.com/r/smallbusiness/comments/1r3wp6r/i_want_to_start_my_own_business/
+  Title: I want to start my own business
+  Relevance: 10 | Upvotes: 4 | Comments: 11
+  Keywords: MED:what do i, MED:where do i, LOW:advice, LOW:don't know, LOW:no idea
+
+#60 (Combined Score: 24.2)
+https://www.reddit.com/r/smallbusiness/comments/1qsi2dr/viewpoint_change/
+  Title: Viewpoint Change
+  Relevance: 8 | Upvotes: 32 | Comments: 82
+  Keywords: HIGH:struggling, BIZ:irs, SIG:first_person_context, SIG:detailed_context, PENALTY:recently_seen
+
